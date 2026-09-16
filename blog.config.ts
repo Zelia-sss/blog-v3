@@ -7,8 +7,8 @@ const basicConfig = {
 	description: '分享学习笔记、技术实践与日常生活。',
 	author: {
 		name: 'Zelia',
-	favicon: '/favicon.jpeg',
-		avatar: '',
+	
+		avatar: '/favicon.jpeg',
 		email: '',
 		homepage: '/',
 	},
@@ -21,7 +21,7 @@ const basicConfig = {
 	language: 'zh-CN',
 	timeEstablished: '2026-09-15',
 	timeZone: 'Asia/Shanghai',
-	url: 'http://localhost:3000/',
+	url: 'https://zelia-blog-dpygojxniupw.edgeone.dev/',
 	defaultCategory: '未分类',
 }
 
