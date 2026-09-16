@@ -1,14 +1,14 @@
 import type { FeedEntry } from './app/types/feed'
 
 const basicConfig = {
-	title: '我的博客',
-	subtitle: '记录技术与生活',
+	title: 'Zelia',
+	subtitle: '唯有行动才能解决所有的不安',
 	// 长 description 利好于 SEO
 	description: '分享学习笔记、技术实践与日常生活。',
 	author: {
 		name: 'Zelia',
 	
-		avatar: '/favicon.jpeg',
+		avatar: '/avatar.png',
 		email: '',
 		homepage: '/',
 	},
