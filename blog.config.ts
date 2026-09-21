@@ -8,7 +8,7 @@ const basicConfig = {
 	author: {
 		name: 'Zelia',
 	
-		avatar: '/avatar.png',
+		avatar: 'https://zelia.top/avatar.png',
 		email: '',
 		homepage: '/',
 	},
@@ -21,7 +21,7 @@ const basicConfig = {
 	language: 'zh-CN',
 	timeEstablished: '2026-09-15',
 	timeZone: 'Asia/Shanghai',
-	url: 'https://zelia-blog-dpygojxniupw.edgeone.dev/',
+	url: 'https://zelia.top/',
 	defaultCategory: '未分类',
 }
 
