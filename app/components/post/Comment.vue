@@ -61,7 +61,7 @@ onMounted(() => {
 </script>
 
 <template>
-<section ref="comment" class="z-comment">
+<section v-if="appConfig.twikoo?.envId" ref="comment" class="z-comment">
 	<h3 class="text-creative">
 		评论区
 	</h3>

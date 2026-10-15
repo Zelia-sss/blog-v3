@@ -1,5 +1,8 @@
 import type { FeedEntry } from './app/types/feed'
 
+/** 自己部署的 Twikoo 服务地址，留空则不启用评论区 */
+const twikooEnvId = ''
+
 const basicConfig = {
 	title: 'Zelia',
 	subtitle: '唯有行动才能解决所有的不安',
@@ -77,9 +80,9 @@ const blogConfig = {
 	},
 
 	/** 向 <head> 中添加脚本 */
-	scripts: [
-		{ src: 'https://lib.baomitu.com/twikoo/1.6.44/twikoo.min.js', defer: true },
-	],
+	scripts: twikooEnvId
+		? [{ src: 'https://lib.baomitu.com/twikoo/1.6.44/twikoo.min.js', defer: true }]
+		: [],
 
 	/** 文章统计配置 */
 	stats: {
@@ -93,8 +96,8 @@ const blogConfig = {
 
 	/** 自己部署的 Twikoo 服务 */
 	twikoo: {
-		envId: 'https://twikoo.ss0t-hacked.top/',
-		preload: 'https://twikoo.ss0t-hacked.top/',
+		envId: twikooEnvId,
+		preload: twikooEnvId,
 	},
 }
 
