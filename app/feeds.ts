@@ -16,4 +16,16 @@ export default [{
 		date: '2019-07-19',
 		comment: 'Clarity 主题作者',
 	}],
+}, {
+	name: 'companion',
+	entries: [{
+		author: '千本圆',
+		desc: '千本圆',
+		link: 'https://blog.qianbenyuan.dpdns.org/',
+		feed: 'https://blog.qianbenyuan.dpdns.org/atom.xml',
+		icon: 'https://blog.qianbenyuan.dpdns.org/assets/avatar.jpg',
+		avatar: 'https://blog.qianbenyuan.dpdns.org/assets/avatar.jpg',
+		archs: ['Nuxt'],
+		date: '2026-10-05',
+	}],
 }] satisfies FeedGroup[]
