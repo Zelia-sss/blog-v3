@@ -44,6 +44,10 @@ const blogConfig = {
 			杂谈: { icon: 'tabler:message', color: '#33bbaa' },
 			/** 记录叙事：个人经历/校园家庭/日常片段 */
 			生活: { icon: 'tabler:leaf', color: '#ff7777' },
+			/** Web：Web安全/Web开发/网络基础 */
+			web: { icon: 'tabler:world', color: '#ffcc33' },
+			/** 读书：书评/读书笔记/摘录 */
+			book: { icon: 'tabler:book', color: '#aa77ff' },
 		},
 		/** 文章版式，首个为默认版式 */
 		types: {
@@ -73,7 +77,9 @@ const blogConfig = {
 	},
 
 	/** 向 <head> 中添加脚本 */
-	scripts: [],
+	scripts: [
+		{ src: 'https://lib.baomitu.com/twikoo/1.6.44/twikoo.min.js', defer: true },
+	],
 
 	/** 文章统计配置 */
 	stats: {
@@ -87,8 +93,8 @@ const blogConfig = {
 
 	/** 自己部署的 Twikoo 服务 */
 	twikoo: {
-		envId: '',
-		preload: '',
+		envId: 'https://twikoo.ss0t-hacked.top/',
+		preload: 'https://twikoo.ss0t-hacked.top/',
 	},
 }
 
@@ -102,7 +108,7 @@ export const myFeed: FeedEntry = {
 	feed: new URL('/atom.xml', blogConfig.url).toString(),
 	icon: blogConfig.favicon,
 	avatar: blogConfig.author.avatar,
-	archs: ['Nuxt'，'EdgeOne'],
+	archs: ['Nuxt','EdgeOne'],
 	date: blogConfig.timeEstablished,
 	comment: '个人博客，欢迎交流友链',
 }

@@ -3,6 +3,8 @@ title: 组件样式示例
 date: 2024-09-21 23:18:18
 updated: 2026-04-06 17:25:03
 aside: [toc, meta-aside-foo, meta-aside-bar]
+image: https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/tutu-smile.png
+categories: [book]
 # type: story
 ---
 
