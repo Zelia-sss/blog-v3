@@ -8,7 +8,7 @@ date: 2026-09-29 00:10:00
 
 updated: 2026-09-29 00:10:00 
 
-image: https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/tutu-wink.png
+image: /images/covers/tutu-01.jpg
 
 categories: [web]
 

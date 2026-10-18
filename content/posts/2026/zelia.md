@@ -3,7 +3,7 @@ title: zelia
 description: 讲述关于zelia的故事，并根据Nuxt给出文章。
 date: 2026-09-15 11:27:25
 updated: 2026-09-15 11:27:25
-image: https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/tutu-laugh.png
+image: /images/covers/tutu-05.jpg
 categories: [生活]
 tags: [Nuxt]
 ---
