@@ -11,7 +11,7 @@ const basicConfig = {
 	author: {
 		name: 'Zelia',
 	
-		avatar: 'https://zelia.top/avatar.png',
+		avatar: 'https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/avatar.png',
 		email: '',
 		homepage: '/',
 	},
@@ -109,7 +109,7 @@ export const myFeed: FeedEntry = {
 	desc: blogConfig.subtitle || blogConfig.description,
 	link: blogConfig.url,
 	feed: new URL('/atom.xml', blogConfig.url).toString(),
-	icon: blogConfig.favicon,
+	icon: 'https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/favicon.jpeg',
 	avatar: blogConfig.author.avatar,
 	archs: ['Nuxt','EdgeOne'],
 	date: blogConfig.timeEstablished,
