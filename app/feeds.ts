@@ -27,5 +27,21 @@ export default [{
 		avatar: 'https://blog.qianbenyuan.dpdns.org/assets/avatar.jpg',
 		archs: ['Nuxt'],
 		date: '2026-10-05',
+	}, {
+		author: 'Nikki',
+		desc: "it's Nikki blog",
+		link: 'https://helloblog.88800001.xyz',
+		feed: 'https://helloblog.88800001.xyz/rss.xml',
+		icon: 'https://tu.helloblog.de5.net/file/1788245385062_c722b895b298dc386f9914165629ccae.jpg',
+		avatar: 'https://tu.helloblog.de5.net/file/1788245385062_c722b895b298dc386f9914165629ccae.jpg',
+		date: '2026-10-19',
+	}, {
+		author: 'HACKED',
+		desc: '一个刚刚入门的pwner，大手子ddw',
+		link: 'https://blog.ss0t-hacked.top',
+		feed: 'https://blog.ss0t-hacked.top/atom.xml',
+		icon: 'https://foruda.gitee.com/avatar/1782995786228285340/15786671_asus_hacked_1782995786.png',
+		avatar: 'https://foruda.gitee.com/avatar/1782995786228285340/15786671_asus_hacked_1782995786.png',
+		date: '2026-10-19',
 	}],
 }] satisfies FeedGroup[]
