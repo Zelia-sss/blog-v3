@@ -43,5 +43,12 @@ export default [{
 		icon: 'https://foruda.gitee.com/avatar/1782995786228285340/15786671_asus_hacked_1782995786.png',
 		avatar: 'https://foruda.gitee.com/avatar/1782995786228285340/15786671_asus_hacked_1782995786.png',
 		date: '2026-10-19',
+	}, {
+		author: 'iss-xx',
+		desc: 'web安全菜鸟打怪升级日记',
+		link: 'https://www.iss-xx.xin/',
+		icon: 'https://www.iss-xx.xin/img/%E5%A4%B4%E5%83%8F.jpg',
+		avatar: 'https://www.iss-xx.xin/img/%E5%A4%B4%E5%83%8F.jpg',
+		date: '2026-10-19',
 	}],
 }] satisfies FeedGroup[]
