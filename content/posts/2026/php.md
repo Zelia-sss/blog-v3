@@ -88,7 +88,7 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 
       `resource=` 是 php://filter **语法里的固定关键字**，`flag.php` 是**我们自己选的目标文件**
 
-  输入**`?file=php://filter/read=convert.base64-encode/resource=flag.php`**
+  输入`?file=php://filter/read=convert.base64-encode/resource=flag.php`
 
   ![Snipaste_2026-10-19_21-48-00](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/Snipaste_2026-10-19_21-48-00.png)
 
