@@ -116,7 +116,7 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 
 ### 更快的解法
 
-其实，我
+其实，我在解题的时候漏了，第二张图片的第二行，不然在输入伪协议的时候就可以直接输入**`?file=php://filter/read=convert.base64-encode/resource=flag`**就不用，二次解码了
 
 ## 🎉拿到flag啦！！！
 
@@ -136,10 +136,11 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 ⑤ 编码结果没有 <?php 标签 → 当纯文本输出
 ```
 
-## 踩过的坑
+## 踩过的坑（别学我啊。。。）
 
 1. **大小写搞反** —— 黑白名单看反了，白名单题传大写，页面回 `Hacker!!` 还以为是文件名错
 2. **`resource=` 漏写** —— 流不知道读谁，包含失败；又碰上 `error_reporting(0)` 吞报错，页面空白以为题坏了
 3. **页面空白就放弃** —— 空白可能是：文件名猜错 / resource 少写 / 关键字被 ban。逐个排查而不是换题
 4. **把输出的 base64 直接当 flag 提交** —— 还要解码一步，解码后的**源码里**才是 flag
 5. **`read=` 忘写以为错了** —— 其实 `read=` 可以省略，`php://filter/convert.base64-encode/resource=flag.php` 等价
+6. 漏了一行提示。。。。
