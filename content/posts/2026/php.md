@@ -1,5 +1,5 @@
 ---
-title: php
+title: php伪协议+base64过滤
 description: web-php
 date: 2026-10-19 22:03:29
 updated: 2026-10-18 23:40:00
@@ -59,8 +59,6 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 
   - include（）只是包含，并不会把flag.php文件里的flag打印出来，所以我们看不到flag
 
-    PHP 最初就是个模板语言。PHP 解析器读任何文件时，默认**逐字符当作普通文本原样输出**，只有遇到 `<?php` 这个起始标签，才切换到“代码模式”，把标签里的内容当代码执行，直到 `?>` 或文件结尾再切回文本模式。
-
     所以：`?file=php`这样写，include()只是获得了flag,但是并不会打印出来
 
   - 怎么样才能让它没有`<？php`这个起始标签，打印出flag呢？
@@ -74,12 +72,12 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
     substr()怎么取字符的？
 
     ```
-    p  h  p  :  /  /  f  i  l  t  e  r  /  ...  r  e  s  o  u  r  c  e  =  f  l  a  g  .  p  h  p
+  p  h  p  :  /  /  f  i  l  t  e  r  /  ...  r  e  s  o  u  r  c  e  =  f  l  a  g  .  p  h  p
     0  1  2  3  4  5  6  7  8  ...                              49 50 51 52 ...
     └─┬─┘                                                              └─┬─┘
     substr 取的是这里 → "php"                                      "fla" 在下标 49
     ```
-
+  
     - `read=convert.base64-encode`是base64编码，为什么要这么写？不加过滤器会怎样？
 
       `?file=php://filter/resource=flag.php`
@@ -106,7 +104,7 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 
 - 代码显示，flag不在这里，`real_flag_is_in_'flag'`真正的flag在flag文件下
 
-- 改为**`?file=php://filter/read=convert.base64-encode/resource=flag**
+- 改为**?file=php://filter/read=convert.base64-encode/resource=flag**
 
   
 
@@ -115,6 +113,10 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 依旧解码
 
 ![Snipaste_2026-10-19_21-56-07](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/Snipaste_2026-10-19_21-56-07.png)
+
+### 更快的解法
+
+其实，我
 
 ## 🎉拿到flag啦！！！
 

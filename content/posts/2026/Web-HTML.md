@@ -70,7 +70,7 @@ HTML—— 搭骨架：决定页面里`有什么内容`（标题、段落、图�
 
 **效果**
 
-![Snipaste_2026-10-19_15-09-19](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/Snipaste_2026-10-19_15-09-19.png)
+![image-20261021211644857](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261021211644857.png)
 
 ### 无序列标签
 
@@ -104,7 +104,7 @@ HTML—— 搭骨架：决定页面里`有什么内容`（标题、段落、图�
 ````html
  <h1>input标签（交互）</h1>
     <div>
-        用户名：<input type="text" name="uername"/>
+        用户名：<input type="text" name="username"/>
     </div>
     <div>
         密码：<input type="text" name="password"/>
