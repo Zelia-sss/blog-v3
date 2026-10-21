@@ -57,9 +57,7 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
 
     PHP 最初就是个模板语言。PHP 解析器读任何文件时，默认**逐字符当作普通文本原样输出**，只有遇到 `<?php` 这个起始标签，才切换到“代码模式”，把标签里的内容当代码执行，直到 `?>` 或文件结尾再切回文本模式。
 
-  - include（）只是包含，并不会把flag.php文件里的flag打印出来，所以我们看不到flag
-
-    所以：`?file=php`这样写，include()只是获得了flag,但是并不会打印出来
+  - include（）只是包含，include(GET(file))，？file=php/resource=flag.php,这样include切换到代码模式，<?php这个起始标签依旧存在，就只会把flag.php的文件包含进来，但是包含不等于输出，所以我们看不到flag,
 
   - 怎么样才能让它没有`<？php`这个起始标签，打印出flag呢？
 
@@ -72,14 +70,14 @@ if (isset($_GET['file'])) {            // URL 里传了 file 参数吗?(有没�
     substr()怎么取字符的？
 
     ```
-  p  h  p  :  /  /  f  i  l  t  e  r  /  ...  r  e  s  o  u  r  c  e  =  f  l  a  g  .  p  h  p
-    0  1  2  3  4  5  6  7  8  ...                              49 50 51 52 ...
-    └─┬─┘                                                              └─┬─┘
-    substr 取的是这里 → "php"                                      "fla" 在下标 49
+    p  h  p  :  /  /  f  i  l  t  e  r  /  ...  r  e  s  o  u  r  c  e  =  f  l  a  g  .  p  h  p
+        0  1  2  3  4  5  6  7  8  ...                              49 50 51 52 ...
+        └─┬─┘                                                              └─┬─┘
+        substr 取的是这里 → "php"                                      "fla" 在下标 49
     ```
   
     - `read=convert.base64-encode`是base64编码，为什么要这么写？不加过滤器会怎样？
-
+  
       `?file=php://filter/resource=flag.php`
 
       这样写等于“原样读出文件内容再 include”——内容里 `<?php` 标签完好无损，PHP 照样把它当**代码执行**：执行一次 `$flag = "flag{xxx}"` 的赋值，没有任何 echo，页面除了 `Nice!!!` 什么都不显示。转了一圈回到原点。
