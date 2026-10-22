@@ -584,9 +584,135 @@ flooog.txt 和flag很像啊，大概率就是它，而且这下边只有这一�
 
 ---
 
-## web16
+## web16(阴魂不散的化学元素周期表)
 
 
 
 ![image-20261022124829645](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022124829645.png)
 
+这个网站做的很炫酷
+
+![image-20261022151802936](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022151802936.png)
+
+### 为什么提示探针就知道要访问/tz.php?
+
+#### 关于tz.php
+
+- `tz.php` 是「雅黑 PHP 探针」的**默认文件名**，而 `tz` 就是「**探**针」的**拼音首字母**（**t**an **z**hen）。它既不是 PHP 的规则，也不是 CTF 的约定，只是老站长们多年来一直这样做，于是这个文件名就成了固定叫法。
+- 早期用 VPS 建站的人想查看服务器的 CPU、内存、硬盘、PHP 版本、禁用的函数等，就会上传一个「PHP 探针」脚本。
+- 国内最流行的是 **雅黑 PHP 探针**（官网 `yahei.net`）。它的下载包就叫 `tz.zip`（`yahei.net/tz/tz.zip`），解压后主文件是 `tz.php`，直接放在网站根目录就能访问。
+- 所有教程、一键安装包（LNMP 等）用的都是这个文件名，**没有人改名**。时间一长，"探针 → tz.php" 就成了行业里的习惯叫法。
+- 所以严格来说，**它并不是“探针就等于 tz.php”这种等价关系**；这里的意思是：圈内默认使用雅黑探针，而雅黑探针的默认文件名就是 `tz.php`。如果换一个探针程序，文件名就会改变。
+
+### 怎么知道要点击PHP信息中的PHPINFO的？
+
+其实这个是我一个个试出来的，当我进入到这个界面的时候，有没有别的提示，就只能一个个看，每一个都点一遍，看看哪里有东西，结果刚好看到phpinfo,其实flag藏在这里面的情况还挺常见的，有的还会藏在apache环境里，这也算是ctf会常出现的题吧
+
+### 怎么快速找到藏在phpinfo里边的flag?
+
+`ctrl`+`F`查询flag,/ctfshow就可以定位到含flag的地方
+
+![image-20261022150424638](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022150424638.png)
+
+
+
+
+
+![image-20261022144441342](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022144441342.png)
+
+---
+
+## web17
+
+### 题目信息
+
+备份文件+sql,看到`sql`不要直接以为就是sql注入
+
+### 怎么知道要访问/backup.sql的？
+
+- **`backup` 是备份文件最普遍、最没有创意的命名。** 运维用 `mysqldump` 备份数据库时，想到的名字几乎都是 `backup.sql`、`db.sql`、`database.sql`、`data.sql`、`xxx_backup.sql`、`20261022.sql`。和上一题的 `tz.php` 是同一个道理（见上一问）：**默认文件名保持默认，就等于问答题变成了填空题**。
+- **放在网站根目录，才会「泄露」。** `.sql` 不是 PHP，Web 服务器只会把它当普通文件返回，所以 URL 加 `/backup.sql` 就直接触发下载。如果备份放在 `/var/backup/` 这种站根（DocRoot）外面，URL 根本访问不到，这份文件再敏感也没事。所以这题真正的漏洞是**备份文件被放进了对外可访问的目录**，并非「有一个 sql 文件」。
+
+### 如果/backup.sql不中怎么办？
+
+按「备份文件字典」挨个试，或直接扫后缀：
+
+```text
+backup.sql   db.sql   database.sql   data.sql
+www.sql      1.sql    sql.sql        ctfshow.sql
+backup_20261022.sql   /backup/backup.sql   /db/backup.sql
+```
+
+![image-20261022153519515](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022153519515.png)
+
+
+
+![image-20261022153342627](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022153342627.png)
+
+
+
+
+
+![image-20261022153426719](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022153426719.png)
+
+---
+
+## web18(这题也好玩)
+
+
+
+
+
+![image-20261022155109766](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022155109766.png)
+
+![image-20261022162231729](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022162231729.png)
+
+
+
+这是个游戏界面，先试着玩两把，题目说玩到101分给flag,反正我是玩不到那么多的了
+
+那就查看查看源码吧
+
+![image-20261022162547376](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022162547376.png)
+
+### 为什么选择.js?
+
+这就是web前端三件套的内容了，其实你也可以，每一个都点进去，然后`ctrl`+`F`查询flag，最终还是会找到.js的
+
+![image-20261022162739241](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022162739241.png)
+
+### 红框中的那串字母是是什么？
+
+它是 JavaScript 的 Unicode 转义序列，格式为 \u + 4 位十六进制数，表示一个字符的码点（编码编号）。
+
+### 怎么识别出来那串字母是转义序列？
+
+**一眼识别：`\u` + 4 位十六进制 `[0-9a-fA-F]`**
+
+这就是它的“签名”，三个特征同时满足：
+
+```
+\u4f60
+││└─┴── 4 位十六进制（0-9, a-f）
+│└────── 字母 u（Unicode 的首字母）
+└─────── 反斜杠（转义序列的起手式）
+```
+
+在实际代码里，它几乎总是**成串、6 个字符一组**出现，这个节奏感非常显眼：（记住这个特征就行）
+
+```
+\u4f60 \u8d62 \u4e86 \uff0c \u53bb \u5e7a \u5e7a \u96f6 \u70b9 ...
+  你     赢     了     ，     去     幺     幺     零     点
+```
+
+### 怎么让它正常显示呢？
+
+把它复制粘贴到控制台，如果控制台不给粘贴，就在里边敲“允许粘贴”并按回车键就好了
+
+![image-20261022163950578](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022163950578.png)
+
+提示你去访问110.php
+
+
+
+![image-20261022160120785](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022160120785.png)
