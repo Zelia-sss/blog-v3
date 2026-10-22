@@ -1,4 +1,6 @@
 *               text=auto
+*.cmd           text eol=crlf
+*.bat           text eol=crlf
 *.md            linguist-detectable
 pnpm-lock.yaml  -linguist-detectable
 app/feeds.ts    -linguist-detectable
