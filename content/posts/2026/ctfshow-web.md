@@ -1,4 +1,5 @@
 ---
+
 title: ctfshow-web-信息搜集
 description: web-wp
 date: 2026-10-20 23:09:00
@@ -711,8 +712,162 @@ backup_20261022.sql   /backup/backup.sql   /db/backup.sql
 
 ![image-20261022163950578](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022163950578.png)
 
-提示你去访问110.php
+`你赢了，去幺幺零点皮爱吃皮看看`提示你去访问`110.php`
 
 
 
 ![image-20261022160120785](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022160120785.png)
+
+---
+
+## web19
+
+- 先试试弱口令（虽然大概率是不对的）
+- 试试查看源码
+
+![image-20261022205355587](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022205355587.png)
+
+
+
+![image-20261022205335532](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022205335532.png)
+
+值得一提的是有没有发现，这种关键信息都在<script> 里，所以你懂的，以后可以重点看看里边的代码
+
+
+
+### 解法一
+
+
+
+![image-20261022205214151](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022205214151.png)
+
+### 为什么u=admin&p=a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04行不通？
+
+**注意看源代码**：POST['username']  post['pazzword']
+
+所以真正的参数名`username`和`pazzword`,这就是为什么u=admin&p=a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04行不通，但是图中的却可以的原因
+
+### 为什么不用key和iv?
+
+![image-20261022210827846](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022210827846.png)
+
+![image-20261022210949673](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022210949673.png)
+
+为什么不用key和vi啊，这个看着也挺像回事的，挺像账号和密码的？其实是干扰项
+
+仔细看，encrypt函数在做AES加密，在函数checkForm中，提交的key，和iv会先加密再返回，加密过后就无法满足===(强等于了)
+
+**所以，这里采用hackbar工具，POST参数，将script里边的哈希字符串绕过js加密,符合===强等于，可拿到flag**
+
+### 关于字符串，怎么知道它是哈希？
+
+1.
+
+- 变量名/字段名：`password`、`pass`、`pwd`、`hash`、`key`、`token`、`sign`；
+- 出现在 `===` / `==` 比较、数据库 `users` 表、配置文件、Cookie/Session 里；
+- 和 salt 拼在一起：`hash:salt`、`md5($pass.$salt)` 这类格式，长度会偏离标准值；
+- 题目提示里出现“密钥”“不要放在前端”“签名”等字眼。
+
+这题就是典型：源码里的 `$p` 被拿去和一段 64 位 hex 做 `===`，同时旁边就有 `key`、`iv`，这些线索已经足以看出它的用途。
+
+2.实在不确定，就上工具
+
+![image-20261022213731387](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022213731387.png)
+
+![image-20261022205256653](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022205256653.png)
+
+### 解法二（获取明文）
+
+通过代码，我们可以知道它的加密逻辑,和密文，那为什么不试试，解密拿到明文登录呢？
+
+在解法一里边我们分析了它是AES加密
+
+#### 关于AES加密
+
+**key**：密钥 
+
+**iv**:偏移量
+
+**密文**：a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04
+
+**模式**：代码中写了mode:CBC
+
+**填充方式**：zeropadding 解密工具里没有zeropadding那就nopadding
+
+可以找一个AES在线解密工具
+
+![image-20261022222253193](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022222253193.png)
+
+账号：admin 密码明文：图中解密得到的字符串
+
+我看别的题解有这个方法，但是不知道为什么，现在这个明文，登不上，可能是题目问题，那就作为一个思路补充吧
+
+### 解法三（获取明文）
+
+好像获取明文的解题方法现在都用不了，但是以前的题解有人解除了，说账号admin密码就是i_want_a_36d_girl,登陆不上不用太过纠结，作为思路补充
+
+可以在控制台输入解密函数
+
+```js
+function decryptHex(data, key, iv) {
+    var key1 = CryptoJS.enc.Latin1.parse(key);
+    var iv1  = CryptoJS.enc.Latin1.parse(iv);
+    return CryptoJS.AES.decrypt(
+        { ciphertext: CryptoJS.enc.Hex.parse(data) },   // 关键：Hex → WordArray
+        key1,
+        { iv: iv1, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.ZeroPadding }
+    ).toString(CryptoJS.enc.Utf8);                       // 关键：按 UTF-8 输出
+}
+
+decryptHex(
+    'a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04',
+    '0000000372619038',
+    'ilove36dverymuch'
+);
+// "i_want_a_36d_girl"
+```
+
+
+
+![image-20261022224719275](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022224719275.png)
+
+---
+
+
+
+## web20
+
+![image-20261023001726209](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023001726209.png)
+
+
+
+根据题目提示访问/db/db.mdb
+
+![image-20261023001937621](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023001937621.png)
+
+
+
+### 怎么想到/db/db.mdb这个路径的？
+
+1. **看提示做技术栈指纹**：页面说「asp + access」，或响应头有 `Server: Microsoft-IIS/6.0`、`X-Powered-By: ASP.NET`、`Set-Cookie: ASPSESSIONID...`，就锁定老式 Windows/IIS 站。
+2. **找入口**：`robots.txt`、源码注释、`/admin`、`/login.asp`、报错页泄露的物理路径。
+3. **按惯例猜**：这类老站目录命名高度套路化—— `db/`、`data/`、`database/`、`databack/`、`bak/`、`backup/` 文件名：`db.mdb`、`data.mdb`、`database.mdb`、`#db.mdb`、`admin.mdb`、`news.mdb`、`db.asa`
+4. **目录扫描兜底**：`dirsearch`、`ffuf`、`gobuster`、7kbscan + 敏感文件字典，把 `mdb/asa/asp/zip/rar/bak` 都挂上。
+
+### 关于.mdb
+
+`.mdb` 是 **Microsoft Access 数据库文件**（Microsoft Database），也是早期 Windows 生态里最常见的“文件型数据库”。
+
+**一个 `.mdb` 文件本身就是一个完整的关系型数据库**，里面装着表、字段、索引、数据，还装着 Access 的窗体、报表、查询、宏、VBA 模块——不像 MySQL 那样是一堆文件加一个服务进程。
+
+### 用数据库查看工具打开.mdb文件
+
+这里我用的工具是**MDB Viewer Plus**
+
+![image-20261023002044204](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023002044204.png)
+
+
+
+
+
+![image-20261023002109909](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023002109909.png)
