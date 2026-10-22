@@ -7,8 +7,6 @@ image: /images/ctf-show/Screenshots-20261021-183601708.png
 tags: [web,信息搜集]
 ---
 
----
-
 ## 信息搜集
 
 ## web03
@@ -403,3 +401,192 @@ perl rip-svn.pl -v -u http://目标/.svn/
 ![image-20261021115735139](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261021115735139.png)
 
 ![image-20261021115634984](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261021115634984.png)
+
+---
+
+## web14
+
+### 题目信息
+
+- editor提示了这题可以往`编辑器`的方向去思考
+- ”如果目录不存在，则会遍历服务器根目录“
+
+
+
+先查看一下源码，发现没线索
+
+![image-20261022011347276](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022011347276.png)
+
+![image-20261022011435491](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022011435491.png)
+
+![image-20261022011854488](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022011854488.png)
+
+扫描得到/editor/目录，访问一下
+
+![image-20261022012020957](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022012020957.png)
+
+
+
+![image-20261022023956600](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022023956600.png)
+
+这就是一个editor的界面的demo页
+
+### 为什么能确定这是一个demo界面？
+
+页面底部 `提交内容（提交快捷键: Ctrl + Enter）` 是 KindEditor 自带 `php/demo.php` 的原样输出——**说明整个安装包被扔到了网站根下，连示例都没删**。
+
+既然 `/editor/` 是完整安装包，那它下面必然有：
+
+```
+/editor/
+├── kindeditor.js            ← 主程序
+├── plugins/                 ← 各种插件（filemanager、insertfile、image...）
+├── themes/                  ← 皮肤
+├── php/
+│   ├── demo.php             ← 看到的这个页面
+│   ├── file_manager_json.php ← 文件空间的后端（本题主角）
+│   ├── upload_json.php      ← 上传的后端
+│   └── JSON.php
+├── asp/  asp.net/  jsp/     ← 其他语言版本，也在！
+└── attached/                ← 上传文件存放目录（默认应该在这）
+```
+
+
+
+![image-20261022012129727](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022012129727.png)
+
+### 为什么点var?
+
+Linux 的网站默认放在 `/var/www`。**它命中的的可能性比较大**——它让你少点几次，但不保证对。
+
+![image-20261022012335424](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022012335424.png)
+
+### 为什么选www?
+
+在前边的web题目中我们也遇到过，www就是常见的网站文件夹
+
+![image-20261022012258113](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022012258113.png)
+
+### 为什么先选了html?
+
+因为，html是前端三件套，该文件夹以此命名，说明是与网站有关的
+
+
+
+![image-20261022012945470](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022012945470.png)
+
+
+
+### 为什么选nothinghere?
+
+你不觉得，它很具有迷惑性吗？nothinghere这里啥也没有,你真信啊？
+
+![image-20261022013013714](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022013013714.png)
+
+
+
+![image-20261022013049593](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022013049593.png)
+
+
+
+flooog.txt 和flag很像啊，大概率就是它，而且这下边只有这一个文件，你也只能点它，点击确定
+
+![image-20261022013125383](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022013125383.png)
+
+### 关于绝对路径
+
+`/var/www/html/nothinghere/fl000g.txt`
+
+#### 为什么它是绝对路径？
+
+在linux系统中，根（/)就是这个斜杠，var/www/html/nothinghere/  是文件夹，fl000g.txt是文件名，`/`也叫`磁盘根`,是linux整个硬盘的起点，这需要我们有一些linux相关的基础知识
+
+### 关于网站根
+
+网站根简称站根，网站根目录 = Web 服务器“对外开放”的那个起点文件夹。浏览器 URL 里的那个 `/`，指的就是它，不是硬盘的 `/`。
+
+### 分清三个根
+
+```
+① 磁盘根        /                        ← Linux 整个硬盘的起点
+② 网站根        /var/www/html             ← 网站“对外营业”的起点（DocRoot）
+③ URL 根        https://host/             ← 浏览器眼里的起点，对应 ②
+```
+
+```
+磁盘根  /
+ ├── bin/  dev/  etc/  home/  lib/  ...   ← 后厨，URL 访问不到
+ └── var/
+      └── www/
+           └── html/        ←←← 网站根（DocRoot）
+                ├── index.php        →  URL: /
+                ├── editor/          →  URL: /editor/
+                ├── assets/          →  URL: /assets/
+                └── nothinghere/
+                     └── fl000g.txt  →  URL: /nothinghere/fl000g.txt
+```
+
+### 绝对路径转换到url路径
+
+由于url的根在html后边，从/开始，所以我们可以根据`/var/www/html/nothinghere/fl000g.txt`把url路径，`/nothinghere/fl000g.txt`写到url中,如图所示
+
+![image-20261022014417305](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022014417305.png)
+
+---
+
+## web15（这题还蛮有意思的）
+
+
+
+
+
+![image-20261022121419013](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022121419013.png)
+
+
+
+![image-20261022121847971](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022121847971.png)
+
+
+
+![image-20261022123157449](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022123157449.png)
+
+这里用到了QQ邮箱的一个特点：QQ邮箱一般都是qq号+@qq.com  这个qq号可能后面会用上，可能是密码什么的（像web12一样），也可能是其他的
+
+看源码你会发现，没有什么信息，然后观察一下这个网站，是那种登录的，需要你输入name,和email,熟悉吗？和web12有点像，那是不是可以采取web12的思路呢，在url，写`/admin`
+
+![image-20261022122606861](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022122606861.png)
+
+
+
+还真有，后台的管理员登录系统，可以先试一下，账号：admin / demo  密码：1156631961  或 0000000 或 12586954775
+
+都试一下发现，都不是
+
+### 忘记密码是不是可以看看
+
+![image-20261022123555555](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022123555555.png)
+
+没招了，看看前面，有什么信息还没用？qq号，如果不是密码，那能不能去qq搜一下呢
+
+![image-20261022124026135](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022124026135.png)
+
+
+
+好嘛，搜完得到地址是陕西安，回到重置密码那里，填入`陕西西安`不对，填`西安`
+
+![image-20261022124111365](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022124111365.png)
+
+拿到密码，回到管理员登录界面，试试看，账号：admin  密码：admin7789
+
+![image-20261022124255721](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022124255721.png)
+
+
+
+---
+
+## web16
+
+
+
+![image-20261022124829645](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261022124829645.png)
+
