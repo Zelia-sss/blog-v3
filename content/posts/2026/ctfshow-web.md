@@ -5,6 +5,7 @@ description: web-wp
 date: 2026-10-20 23:09:00
 updated: 2026-10-20 23:09:00
 image: /images/ctf-show/Screenshots-20261021-183601708.png
+categories: [web]
 tags: [web,信息搜集]
 ---
 

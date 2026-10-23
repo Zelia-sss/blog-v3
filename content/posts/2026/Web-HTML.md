@@ -1,6 +1,6 @@
 ---
-title: Web基础-前端三件套
-description: HTML，CSS，JS 
+title: Web基础
+description: HTML，CSS，JS ,php
 date: 2026-10-19 13:44:25
 updated: 2026-10-19 
 image: /images/HTML/6024DB8AC1F771C2822693DDD9BBA4D7.jpg
@@ -225,3 +225,219 @@ JavaScript（`负责交互行为`)
 ![Snipaste_2026-10-19_16-37-39](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/Snipaste_2026-10-19_16-37-39.png)
 
 ![Snipaste_2026-10-19_16-38-33](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/Snipaste_2026-10-19_16-38-33.png)
+
+## PHP
+
+php常用于生成动态的html文档（往html中塞了动态文本）
+
+### 开始标记和结束标记
+
+首先呢，php需要有开始标记,和结束标记，我们的代码就包括在这两个首尾标记之间
+
+```php
+<?php
+//开始标记
+    
+...//具体代码
+
+?>
+//结束标记
+```
+
+### 变量和常量
+
+```php
+$变量名=值；//变量一般用小写字母
+$n=1;
+
+
+//define("常量名",常量值)；
+define("Num1",11);
+echo Num1,"<br>";
+//const 常量名=常量值；
+const Num2=22;
+echo Num2,"<br>";
+
+
+```
+
+![image-20261023161230322](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023161230322.png)
+
+### php数据类型
+
+- 布尔型：0、1 ；false,true
+
+- 整型int
+
+- 浮点型
+
+- 字符串string
+
+- 数组（可存放多种数据类型）array
+
+  ```php
+  <?php
+  $d=array('a',1,'c',array(1,2,3));
+  echo $d;//会报错，为啥？这里先不说，我留个悬念,看echo
+  echo $d[0];//bingo
+  ?>
+  ```
+
+  
+
+- 对象object
+
+- 资源类型Resource
+
+既然写到了数据类型，就在这里解释两个与数据类型相关的函数
+
+#### gettype()
+
+```
+gettype(变量)
+```
+
+![image-20261023161543358](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023161543358.png)
+
+
+
+### 关于echo
+
+echo是最常见的,看起来可能不起眼，就输出嘛，但是却很重要，后续的很多web漏洞可能都是因为它
+
+首先，它是语言结构，**不是函数**
+
+其次，echo,是用来输出**字符串型**的数据的，这也就是为什么上边的`echo $d;`会报错的原因，因为数组里边，不只有字符串型还有整型数据
+
+### 运算符
+
+**加减乘除** ：`+,-,*,%`
+
+**并置**：连接两个字符串 
+
+```php
+echo "Hi"."hi","<br>";
+echo 7.3,"<br>";//原本是整数，并置之后，表现形式变成了字符串，但并不是数据类型变了
+```
+
+`7.3` 在内存里**不是**以字符 `"7.3"` 存的，而是 IEEE 754 的二进制浮点数；只有在你拼接、`echo`、比较的时候，PHP 才**临时**把它转成字符串。所以“字符串形式”只是它在某个操作中的**表现形式**，不是它的存储类型。
+
+**自增，自减**
+
+++X,X++
+
+--X ,X--
+
+### 比较运算符（一般和if一起用）
+
+**弱等于**：==
+
+**强等于**：===
+
+**不等于**：！=   or   <>
+
+**大于，小于，大于等于，小于等于**：>/</>=/<=
+
+### 逻辑运算符（结果是布尔型）
+
+```php
+x and y //与
+x && y
+
+x or y//或
+x || y
+
+!y//取反
+
+x xor y //抑或，当且仅当一个为真才为真
+```
+
+### 三元运算
+
+``` php
+$a=1;
+$b=2;
+$a>$b ? $n=10:$n=20;
+echo $n; 
+```
+
+结果是20
+
+### 循环
+
+for
+
+#### 数组循环用foreach
+
+```php
+$c=array("一号"=>"Zelia","二号"=>"tutu","三号"=>"刷子");//=> 左边是键，右边是值。
+echo "<table border='1' cellpadding='6'>";
+echo "<tr><th>编号</th><th>名字</th></tr>";   
+foreach($c as $key=>$val){
+$info="<tr><td>$key</td><td>$val</td></tr>";
+echo "$info";
+}
+echo "</table>";        
+
+```
+
+- `<tr>` = table row（一行）
+- `<th>` = table header（表头单元格，默认加粗居中）
+
+输出表格的**开始标签**（PHP 里 HTML 就是普通字符串）：
+
+- `border='1'` → 显示 1 像素边框
+- `cellpadding='6'` → 单元格内容和边框之间留 6 像素空白
+
+**遍历数组**，每轮取出一个键值对：
+
+- `$key` ← 当前键（一号、二号、三号）
+- `$val` ← 当前值（Zelia、tutu、刷子）
+- `$c` 有 3 个元素，所以循环 **3 次**，顺序和定义时一致
+
+
+
+![image-20261023170006159](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261023170006159.png)
+
+**用 PHP 循环，把“关联数组”里的数据拼成一张 HTML 表格，输出给浏览器。**
+
+ 语法到这里，基本上就大差不差了
+
+### 最最最最重要的（ctf-web常出现）
+
+刚开始，可能对这些没感觉，再web题中，还会看到，在这里，浏览一遍，了解即可
+
+- 代码中出现
+
+  eval($str)              // 把字符串当 PHP 代码跑
+  assert($str)            // PHP 7 可执行代码，8 起不会
+  include / require       // 包含文件，路径可控就能包含任意文件
+  call_user_func($f, ...) // 回调可控 = 任意函数调用
+  $f()  ${$name}  $$var   // 变量函数，变量名可控就危险
+  create_function()       // 已移除，老代码里还能见到
+
+- 危险命令
+
+system()  exec()  shell_exec()  passthru()
+popen()   proc_open()  pcntl_exec()
+`ls`      // 反引号，等价 shell_exec
+
+- 文件读取、写入，包含
+
+file_get_contents()  readfile()  fopen()  file()
+file_put_contents()  fwrite()    unlink()  copy()  rename()
+move_uploaded_file()
+highlight_file() / show_source()
+scandir() / glob()
+
+- 数据库查询
+
+mysqli_query()      // 字符串拼接就注入
+PDO::query() / exec()
+$pdo->prepare()     // 用错照样注入（假预处理）
+
+- 反序列化
+
+unserialize($data)
+以及 phar:// 触发的隐式反序列化
+

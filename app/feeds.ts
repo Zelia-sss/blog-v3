@@ -50,5 +50,12 @@ export default [{
 		icon: 'https://www.iss-xx.xin/img/%E5%A4%B4%E5%83%8F.jpg',
 		avatar: 'https://www.iss-xx.xin/img/%E5%A4%B4%E5%83%8F.jpg',
 		date: '2026-10-19',
+	}, {
+		author: 'yun jing',
+		desc: '芸璟的个人技术博客，记录 Web 安全、开发与学习笔记',
+		link: 'https://zhonghai2006.github.io/boke-github.io/',
+		icon: 'https://zhonghai2006.github.io/boke-github.io/img/xiaobaobao.png',
+		avatar: 'https://zhonghai2006.github.io/boke-github.io/img/xiaobaobao.png',
+		date: '2026-10-23',
 	}],
 }] satisfies FeedGroup[]
