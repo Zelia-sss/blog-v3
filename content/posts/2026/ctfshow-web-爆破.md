@@ -306,22 +306,22 @@ if(isset($_GET['r'])){
 
 ### 关于include()
 
-include有包含的作用，`include("flag.php");`在这里，包含的内容是flag.php 里的flag，包括里边的$flag,并且$flag还是**全局变量**，这也就解释了为什么在`mt_srand(hexdec(substr(md5($flag), 0,8)));`这串代码执行之前，我们并没有看到定义或初始化$flag,但是这一串代码里又可以使用$flag.因为$flag本来就是flag.php里定义的，经过include之后，它落在当前作用域（这里是全局作用域）里，所以这里可以直接用md5($flag)。
+include有包含的作用，`include("flag.php");`在这里，包含的内容是flag.php 里的flag，包括里边的 `$flag`，并且 `$flag` 还是**全局变量**，这也就解释了为什么在 `mt_srand(hexdec(substr(md5($flag), 0,8)));` 这串代码执行之前，我们并没有看到定义或初始化 `$flag`，但是这一串代码里又可以使用 `$flag`。因为 `$flag` 本来就是 flag.php 里定义的，经过 include 之后，它落在当前作用域（这里是全局作用域）里，所以这里可以直接用 `md5($flag)`。
 
 那为什么既然flag.php里已经包含了flag,我们不能直接拿到flag呢？
 
 这就是include函数的作用了，包含，但是**包含并不等同于会输出**，它是把flag.php包含了，也把flag包含了，但是**没有echo flag**,就不会显示flag，我们**就无法看到flag**。
 
-所以我们才需要满足下方的条件判断，让它echo $flag
+所以我们才需要满足下方的条件判断，让它 `echo $flag`
 
 ### 关于hexdec()
 
-- hexdec:按16进制读取，输出10进制
-- mt_srand(hexdec(substr(md5($flag), 0,8)));这一行可以拆开来，一步步看
-- substr(md5($flag), 0,8) 从flag.php中的$flag全局变量，让它进行MD5运算，从第一位开始取8个字符
-- hexdec(substr(md5($flag), 0,8)) 取完字符后，hexdec按16进制读取，10进制输出
-- mt_srand(hexdec(substr(md5($flag), 0,8)));mt_srand() 把输出的10进制值，当成种子
-- 由此可见，`mt_srand(hexdec(substr(md5($flag), 0,8)));` 这一行的作用就是**用 flag 造种子**
+- hexdec：按 16 进制读取，输出 10 进制
+- `mt_srand(hexdec(substr(md5($flag), 0, 8)));` 这一行可以拆开来，一步步看
+- `substr(md5($flag), 0, 8)` 从 flag.php 中的 `$flag` 全局变量，让它进行 MD5 运算，从第一位开始取 8 个字符
+- `hexdec(substr(md5($flag), 0, 8))` 取完字符后，hexdec 按 16 进制读取，10 进制输出
+- `mt_srand(hexdec(substr(md5($flag), 0, 8)));` mt_srand() 把输出的 10 进制值，当成种子
+- 由此可见，`mt_srand(hexdec(substr(md5($flag), 0, 8)));` 这一行的作用就是**用 flag 造种子**
 
 ### 捋捋逻辑，看拿到flag要满足什么，从终点往前推
 
