@@ -3,7 +3,7 @@ title: ctfshow-web-爆破
 description: web-wp
 date: 2026-10-25 1:15:00
 updated: 2026-10-25 00:00:00
-image: /images/ctf-show/Screenshots-20261021-183601708.png
+image: /images/baopo/1.jpg
 categories: [web]
 tags: [web,爆破]
 ---
