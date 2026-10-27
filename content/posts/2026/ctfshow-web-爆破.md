@@ -275,3 +275,101 @@ echo intval(mt_rand());/*打出-从随机序列中取出的随机数*/
 
 
 
+---
+
+## web25（有点巧妙）
+
+![image-20261027153615290](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027153615290.png)
+
+一打开又是php代码，还是一样的先读懂代码要干什么才能拿到flag,再开始干活
+
+```php
+error_reporting(0);/*关闭所有错误或警告输出，让代码看起来没有报错*/
+include("flag.php");/*把 flag.php 的代码包含进来执行，$flag 也就跟着进来了*/
+if(isset($_GET['r'])){
+    $r = $_GET['r'];/*需要传入一个参数给r*/
+    mt_srand(hexdec(substr(md5($flag), 0,8)));/*从第一位开始，连续取8个字符，这8个字符是从flag进行MD5运算之后的结果中取的，取的是哈希值,或许你会疑惑，我都不知道flag啊，也没有在这串代码之前看到过$flag,那是哪里来的呢？别急，先往下看*/
+    $rand = intval($r)-intval(mt_rand());/*rand=r-第一个取随机数*/
+    if((!$rand)){/*$rand 为 0 时 !$rand 为真，才算过第一关*/
+        if($_COOKIE['token']==(mt_rand()+mt_rand())){/*需要在cookie里传入token,并且要弱等于 第二个取随机数 和 第三个取随机数的和*/
+            echo $flag;
+        }
+    }else{
+        echo $rand;/*如果r-第一次取随机数不等于0，那就输出他们之间的差值*/
+    }
+}else{
+    highlight_file(__FILE__);
+    echo system('cat /proc/version');
+}
+```
+
+### 关于include()
+
+include有包含的作用，`include("flag.php");`在这里，包含的内容是flag.php 里的flag，包括里边的$flag,并且$flag还是**全局变量**，这也就解释了为什么在`mt_srand(hexdec(substr(md5($flag), 0,8)));`这串代码执行之前，我们并没有看到定义或初始化$flag,但是这一串代码里又可以使用$flag.因为$flag本来就是flag.php里定义的，经过include之后，它落在当前作用域（这里是全局作用域）里，所以这里可以直接用md5($flag)。
+
+那为什么既然flag.php里已经包含了flag,我们不能直接拿到flag呢？
+
+这就是include函数的作用了，包含，但是**包含并不等同于会输出**，它是把flag.php包含了，也把flag包含了，但是**没有echo flag**,就不会显示flag，我们**就无法看到flag**。
+
+所以我们才需要满足下方的条件判断，让它echo $flag
+
+### 关于hexdec()
+
+- hexdec:按16进制读取，输出10进制
+- mt_srand(hexdec(substr(md5($flag), 0,8)));这一行可以拆开来，一步步看
+- substr(md5($flag), 0,8) 从flag.php中的$flag全局变量，让它进行MD5运算，从第一位开始取8个字符
+- hexdec(substr(md5($flag), 0,8)) 取完字符后，hexdec按16进制读取，10进制输出
+- mt_srand(hexdec(substr(md5($flag), 0,8)));mt_srand() 把输出的10进制值，当成种子
+- 由此可见，`mt_srand(hexdec(substr(md5($flag), 0,8)));` 这一行的作用就是**用 flag 造种子**
+
+### 捋捋逻辑，看拿到flag要满足什么，从终点往前推
+
+根据代码，要echo flag 就需要满足两个条件判断
+
+1. r-第一次取随机数=rand要等于0，那说明r要等于第一个随机数，那我怎么知道第一个随机数是啥
+
+   #### 巧妙之处
+
+   **让r=0**,0-第一个随机数=第一个随机数的负数，这就可以知道第一个随机数了
+
+2.    token=第二个随机数 +第三个随机数 ，我怎么能知道剩下的随机数呢？
+
+      #### 逆推的思维
+
+      **已知：种子是固定的，随机数序列固定。现在手上已经有了第一个随机数，可以用工具（php_mt_seed）逆推种子，再按顺序取 3 次 mt_rand()，就能拿到第二个和第三个随机数**
+
+      #### 为什么可以逆推种子，拿到第二，第三个随机数？
+
+      因为mt_srand()利用flag造种子已经把种子固定了，种子固定，随机序列也是固定的，通过逆推得到种子后，第一次取随机值mt_rand()，对应的就是第一个随机数，第二次取随机值mt_rand()，对应的就是第二个随机数，第三次取随机值mt_rand()，对应的就是第三个随机数
+
+      
+
+### 具体操作
+
+- 利用r=0先拿到第一个随机数
+
+  ![image-20261027164909949](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027164909949.png)
+
+- 我们现在需要利用工具逆推出种子，根据版本选择，种子可能输出一两个，都试试
+
+  ![image-20261027172606413](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027172606413.png)
+
+- 拿到种子后，写脚本检验第一个随机数是否与 r=0 时试出来的一样
+
+  > 注意：第一个随机数相同只能说明它是**候选种子之一**。因为种子是 32 位、而一次输出只有 31 位，平均会有两个不同的种子算出同一个第一个随机数，所以工具给出的候选种子都要逐个试 token，直到出 flag。
+
+- 确认种子后，再取第二个+第三个随机数
+
+![image-20261027172919739](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027172919739.png)
+
+```php
+<?php
+mt_srand(0x60eda542);/*根据逆推工具得到的种子，播种*/
+echo mt_rand(),"<br>";/*查看种子的第一个随机序列是否正确，检验种子*/
+echo  mt_rand()+mt_rand();/*输出第二个序列+第三个序列 */
+?>
+```
+
+- r=第一个随机数；写token到cookie中
+
+![image-20261027173031473](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027173031473.png)
