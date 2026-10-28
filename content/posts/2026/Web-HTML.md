@@ -409,12 +409,14 @@ echo "</table>";
 
 - 代码中出现
 
+  ```
   eval($str)              // 把字符串当 PHP 代码跑
   assert($str)            // PHP 7 可执行代码，8 起不会
   include / require       // 包含文件，路径可控就能包含任意文件
   call_user_func($f, ...) // 回调可控 = 任意函数调用
   $f()  ${$name}  $$var   // 变量函数，变量名可控就危险
   create_function()       // 已移除，老代码里还能见到
+  ```
 
 - 危险命令
 
