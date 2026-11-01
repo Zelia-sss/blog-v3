@@ -34,11 +34,18 @@ pnpm lint       # 代码检查
 
 ## 内容与配置
 
-- `content/posts`：正式文章；`content/previews`：草稿（仅站内搜索可见）
+- `content/posts`：正式文章；`content/previews`：草稿/预览（**不是私密区域**，只隐藏了入口，构建后仍可通过链接或 `/raw` 访问）
 - `blog.config.ts`：站点名称、作者、域名、分类、订阅源等静态配置
 - `app/app.config.ts`：页脚导航、侧栏导航、分页与精选文章样式
 - `app/feeds.ts`：友链列表
 - `content/link.md`：友链申请说明
+
+## 安全说明
+
+- `content/previews` 不是访问控制：敏感草稿请放在私有分支或私有仓库，不要放进会部署的内容目录。
+- 仓库只存放可公开内容；`SecretKey.csv`、`.env`、证书私钥等已加入 `.gitignore`，不要提交。
+- 线上应开启 EdgeOne 控制台的“强制 HTTPS 访问”；本项目同时通过 `edgeone.json` 下发 HSTS、CSP 等安全响应头。
+- `@bikariya/shiki` 固定为 0.0.8，并通过 `patches/` 将代码高亮语言包改为本地打包；升级前需同步更新补丁。
 
 ## 部署
 

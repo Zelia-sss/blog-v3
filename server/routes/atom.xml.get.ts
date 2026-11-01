@@ -1,5 +1,5 @@
 import type { ContentCollectionItem } from '@nuxt/content'
-import { pascalCase } from 'es-toolkit/string'
+import { escape, pascalCase } from 'es-toolkit/string'
 import XmlBuilder from 'fast-xml-builder'
 import { Temporal } from 'temporal-polyfill'
 import blogConfig from '~~/blog.config'
@@ -33,11 +33,14 @@ function getUrl(path: string | undefined) {
 }
 
 function renderContent(post: ContentCollectionItem) {
+	const title = escape(post.title ?? '')
+	const image = post.image ? escape(post.image) : ''
+	const description = post.description ? escape(post.description) : ''
 	return [
-		post.image && `<img src="${post.image}" alt="${post.title}" />`,
-		post.description && `<p>${post.description}</p>`,
-		`<a class="view-full" href="${getUrl(post.path)}" target="_blank">点击查看全文</a>`,
-	].join(' ')
+		image && `<img src="${image}" alt="${title}" />`,
+		description && `<p>${description}</p>`,
+		`<a class="view-full" href="${escape(getUrl(post.path))}" target="_blank" rel="noopener noreferrer">点击查看全文</a>`,
+	].filter(Boolean).join(' ')
 }
 
 export default defineEventHandler(async (event) => {

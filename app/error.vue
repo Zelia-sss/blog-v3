@@ -4,6 +4,8 @@ import type { NuxtError } from '#app'
 defineProps<{
 	error: NuxtError & { url?: string }
 }>()
+
+const isDev = import.meta.dev
 </script>
 
 <template>
@@ -14,9 +16,9 @@ defineProps<{
 
 	<div class="app-error">
 		<ZError
-			:code="error.stack"
-			:message="error.url"
-			:title="`[${error.status}] ${error.message}`"
+			:code="isDev ? error.stack : undefined"
+			:message="isDev ? error.url : undefined"
+			:title="`[${error.status}] ${isDev ? error.message : '页面出错了'}`"
 		>
 			<template #operation>
 				<ZButton text="返回主页" @click="clearError({ redirect: '/' })" />

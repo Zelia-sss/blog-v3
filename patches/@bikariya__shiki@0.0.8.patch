@@ -1,0 +1,88 @@
+diff --git a/dist/runtime/store.js b/dist/runtime/store.js
+index 9e3fb5e86c7f30bed3c096aa322c03ff48126f20..79f467ca1094091c5a1c379c8792ac5412fd8527 100644
+--- a/dist/runtime/store.js
++++ b/dist/runtime/store.js
+@@ -1,5 +1,61 @@
+ import { defineStore, onScopeDispose } from "#imports";
+ import untyped from "~/shiki.config";
++
++const localLanguages = {
++  bash: () => import("shiki/langs/bash.mjs"),
++  bat: () => import("shiki/langs/bat.mjs"),
++  c: () => import("shiki/langs/c.mjs"),
++  "c#": () => import("shiki/langs/csharp.mjs"),
++  "c++": () => import("shiki/langs/cpp.mjs"),
++  cpp: () => import("shiki/langs/cpp.mjs"),
++  csharp: () => import("shiki/langs/csharp.mjs"),
++  css: () => import("shiki/langs/css.mjs"),
++  diff: () => import("shiki/langs/diff.mjs"),
++  docker: () => import("shiki/langs/dockerfile.mjs"),
++  dockerfile: () => import("shiki/langs/dockerfile.mjs"),
++  go: () => import("shiki/langs/go.mjs"),
++  html: () => import("shiki/langs/html.mjs"),
++  http: () => import("shiki/langs/http.mjs"),
++  ini: () => import("shiki/langs/ini.mjs"),
++  java: () => import("shiki/langs/java.mjs"),
++  javascript: () => import("shiki/langs/javascript.mjs"),
++  js: () => import("shiki/langs/javascript.mjs"),
++  json: () => import("shiki/langs/json.mjs"),
++  jsonc: () => import("shiki/langs/jsonc.mjs"),
++  jsx: () => import("shiki/langs/jsx.mjs"),
++  less: () => import("shiki/langs/less.mjs"),
++  lua: () => import("shiki/langs/lua.mjs"),
++  make: () => import("shiki/langs/makefile.mjs"),
++  makefile: () => import("shiki/langs/makefile.mjs"),
++  markdown: () => import("shiki/langs/markdown.mjs"),
++  md: () => import("shiki/langs/markdown.mjs"),
++  nginx: () => import("shiki/langs/nginx.mjs"),
++  perl: () => import("shiki/langs/perl.mjs"),
++  php: () => import("shiki/langs/php.mjs"),
++  powershell: () => import("shiki/langs/powershell.mjs"),
++  ps1: () => import("shiki/langs/powershell.mjs"),
++  pwsh: () => import("shiki/langs/powershell.mjs"),
++  py: () => import("shiki/langs/python.mjs"),
++  python: () => import("shiki/langs/python.mjs"),
++  rb: () => import("shiki/langs/ruby.mjs"),
++  rs: () => import("shiki/langs/rust.mjs"),
++  ruby: () => import("shiki/langs/ruby.mjs"),
++  rust: () => import("shiki/langs/rust.mjs"),
++  scss: () => import("shiki/langs/scss.mjs"),
++  sh: () => import("shiki/langs/shellscript.mjs"),
++  shell: () => import("shiki/langs/shellscript.mjs"),
++  shellscript: () => import("shiki/langs/shellscript.mjs"),
++  sql: () => import("shiki/langs/sql.mjs"),
++  toml: () => import("shiki/langs/toml.mjs"),
++  ts: () => import("shiki/langs/typescript.mjs"),
++  tsx: () => import("shiki/langs/tsx.mjs"),
++  typescript: () => import("shiki/langs/typescript.mjs"),
++  vue: () => import("shiki/langs/vue.mjs"),
++  xml: () => import("shiki/langs/xml.mjs"),
++  yaml: () => import("shiki/langs/yaml.mjs"),
++  yml: () => import("shiki/langs/yaml.mjs")
++};
++
+ export const useShikiStore = defineStore("shiki", () => {
+   let promise;
+   let shiki;
+@@ -32,10 +88,8 @@ export const useShikiStore = defineStore("shiki", () => {
+       engine = createJavaScriptRegexEngine();
+     } catch {
+       const [{ createOnigurumaEngine }, wasm] = await Promise.all([
+-        // @ts-expect-error TS2307
+-        import("https://esm.sh/shiki/engine-oniguruma.mjs"),
+-        // @ts-expect-error TS2307
+-        import("https://esm.sh/shiki/wasm")
++        import("shiki/engine/oniguruma"),
++        import("shiki/wasm")
+       ]);
+       engine = await createOnigurumaEngine(wasm);
+     }
+@@ -56,7 +110,7 @@ export const useShikiStore = defineStore("shiki", () => {
+     });
+   }
+   async function loadLang(...langs) {
+-    const { bundledLanguages } = await import("https://esm.sh/shiki/langs");
++    const bundledLanguages = localLanguages;
+     const loadedLanguages = shiki?.getLoadedLanguages() ?? [];
+     await Promise.all(
+       langs.filter((lang) => !loadedLanguages.includes(lang)).map((lang) => bundledLanguages[lang]?.().then(shiki?.loadLanguage))

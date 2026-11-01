@@ -23,6 +23,17 @@ logs
 .env.*
 !.env.example
 
+# Secrets
+SecretKey.csv
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+id_rsa*
+cos-*.json
+picgo*.json
+
 # Custom
 .vercel
 content/posts/test.md

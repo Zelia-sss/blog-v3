@@ -39,7 +39,7 @@ function getInspectStyle(src: string): CSSProperties {
 	<UtilLink
 		class="feed-card gradient-card"
 		:to="error ? undefined : link"
-		rel="noopener"
+		rel="noopener noreferrer"
 		:data-error="error"
 	>
 		<div class="avatar" :title="feed ? undefined : '无订阅源'">
@@ -49,7 +49,7 @@ function getInspectStyle(src: string): CSSProperties {
 				<NuxtImg :src="avatar" :title="avatar" :style="getInspectStyle(avatar)" />
 			</ClientOnly>
 
-			<NuxtImg v-else class="round-cobblestone" :src="avatar" :alt="author" loading="lazy" />
+			<NuxtImg v-else class="round-cobblestone" :src="avatar" :alt="author" loading="lazy" referrerpolicy="no-referrer" />
 			<Icon v-if="appConfig.link.remindNoFeed && !feed" class="no-feed" name="tabler:bell-off" />
 		</div>
 
@@ -59,7 +59,7 @@ function getInspectStyle(src: string): CSSProperties {
 
 	<template #content>
 		<div class="site-content">
-			<NuxtImg class="site-icon" :src="icon" :alt="title" loading="lazy" />
+			<NuxtImg class="site-icon" :src="icon" :alt="title" loading="lazy" referrerpolicy="no-referrer" />
 
 			<div class="site-info">
 				<h3 class="text-creative">

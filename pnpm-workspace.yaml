@@ -9,7 +9,8 @@ allowBuilds:
 
 catalogs:
   content:
-    '@bikariya/shiki': ^0.0.8
+    # 固定版本以匹配 patches/@bikariya__shiki@0.0.8.patch（本地语言包，移除运行时 esm.sh 依赖）
+    '@bikariya/shiki': 0.0.8
     '@nuxt/content': ^3.16.0
     '@nuxtjs/seo': ^5.3.14
     '@shikijs/colorized-brackets': ^4.4.3
@@ -81,7 +82,12 @@ catalogs:
 
 engineStrict: true
 
+overrides:
+  dompurify: ^3.4.17
+  sharp: ^0.35.5
+
 patchedDependencies:
+  '@bikariya/shiki@0.0.8': patches/@bikariya__shiki@0.0.8.patch
   # 图片支持配置 1.5x 像素密度
   '@nuxt/image': patches/@nuxt__image.patch
   # 代码块不将 tab 转为空格
