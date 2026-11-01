@@ -1,7 +1,7 @@
 ---
 title: ctfshow-web-命令执行
 description: web-wp
-permalink: /2026/ctfshow-web-命令执行
+permalink: /2026/ctfshow-web-command-exec
 date: 2026-11-01 10:15:00
 updated: 2026-11-01 10:16:00
 image:  /images/baopo/2.jpg
@@ -133,12 +133,12 @@ $flag = 'ctfshow{33a9d6bd-fee1-40ee-9cc1-88067edd1015}';
  ` if(!preg_match("/flag/i", $c))`正则只检查$c这一个参数的值，其它参数没有被检查，那就可以传两个参数，第一个参数绕过检查（参数的值是第二个参数的名字，不含flag），检查只会检查到一个参数名，第二个参数放真正的flag文件名，并且用函数获取文件内容。
 
 ```
-?c=system($_GET[1]);$1=tac flag.php
+?c=system($_GET[1]);&1=tac flag.php
 ```
 
 `?c=system($_GET[1]);`里边没有flag这个字符串，通过，执行eval
 
-`$1=tac flag.php`里边写着flag但是，没人检查啊
+`&1=tac flag.php`里边写着flag但是，没人检查啊
 
 ![image-20261101122326876](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261101122326876.png)
 
