@@ -2,8 +2,8 @@
 title: ctfshow-web-命令执行
 description: web-wp
 permalink: /2026/ctfshow-web-命令执行
-date: 2026-11-1 10:15:00
-updated: 2026-11-1 10:16:00
+date: 2026-11-01 10:15:00
+updated: 2026-11-01 10:16:00
 image:  /images/baopo/2.jpg
 categories: [web]
 tags: [web,命令执行]
