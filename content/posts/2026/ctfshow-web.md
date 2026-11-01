@@ -2,6 +2,7 @@
 
 title: ctfshow-web-信息搜集
 description: web-wp
+recommend: 3
 date: 2026-10-20 23:09:00
 updated: 2026-10-20 23:09:00
 image: /images/ctf-show/Screenshots-20261021-183601708.png

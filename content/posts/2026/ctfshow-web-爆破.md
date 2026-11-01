@@ -1,6 +1,7 @@
 ---
 title: ctfshow-web-爆破
 description: web-wp
+recommend: 4
 permalink: /2026/ctfshow-web-baopo
 date: 2026-10-25 01:15:00
 updated: 2026-10-25 00:00:00

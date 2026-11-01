@@ -1,6 +1,7 @@
 ---
 title: Web基础
 description: HTML，CSS，JS ,php
+recommend: 2
 date: 2026-10-19 13:44:25
 updated: 2026-10-19 
 image: /images/HTML/6024DB8AC1F771C2822693DDD9BBA4D7.jpg

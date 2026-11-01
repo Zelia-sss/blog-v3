@@ -10,10 +10,10 @@ const basicConfig = {
 	description: '分享学习笔记、技术实践与日常生活。',
 	author: {
 		name: 'Zelia',
-	
+
 		avatar: 'https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/avatar.png',
 		email: '',
-		homepage: '/',
+		homepage: 'https://github.com/Zelia-sss',
 	},
 	copyright: {
 		abbr: 'CC BY-NC-SA 4.0',
@@ -111,7 +111,7 @@ export const myFeed: FeedEntry = {
 	feed: new URL('/atom.xml', blogConfig.url).toString(),
 	icon: 'https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/favicon.jpeg',
 	avatar: blogConfig.author.avatar,
-	archs: ['Nuxt','EdgeOne'],
+	archs: ['Nuxt', 'EdgeOne'],
 	date: blogConfig.timeEstablished,
 	comment: '个人博客，欢迎交流友链',
 }

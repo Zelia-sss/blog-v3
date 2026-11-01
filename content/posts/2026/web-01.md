@@ -1,10 +1,11 @@
 ---
 title: Web安全学习笔记(一):操作系统与数据库识别
 description: 记录 Web 安全入门的第一课:如何识别目标的操作系统与数据库类型,并在本地 vulhub 靶场复现 MS17-010 永恒之蓝与 MySQL CVE-2012-2122 认证绕过。
+recommend: 1
 date: 2026-09-15 11:27:25
 updated: 2026-10-18 23:40:00
 image: /images/covers/tutu-04.jpg
-categories: [study]
+categories: [web]
 tags: [Web安全, 渗透测试, Metasploit, vulhub]
 ---
 

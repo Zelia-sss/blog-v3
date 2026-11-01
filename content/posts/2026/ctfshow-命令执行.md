@@ -1,6 +1,7 @@
 ---
 title: ctfshow-web-命令执行
 description: web-wp
+recommend: 5
 permalink: /2026/ctfshow-web-command-exec
 date: 2026-11-01 10:15:00
 updated: 2026-11-01 10:16:00
