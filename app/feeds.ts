@@ -57,5 +57,13 @@ export default [{
 		icon: 'https://zhonghai2006.github.io/boke-github.io/img/xiaobaobao.png',
 		avatar: 'https://zhonghai2006.github.io/boke-github.io/img/xiaobaobao.png',
 		date: '2026-10-23',
+	}, {
+		author: '番茄大王',
+		desc: '一个分享生活趣事和各种知识的地方',
+		link: 'https://fanqiedawangdeboke.dpdns.org/',
+		icon: 'https://fanqiedawangdeboke.dpdns.org/img/avatar.webp',
+		avatar: 'https://fanqiedawangdeboke.dpdns.org/img/avatar.webp',
+		archs: ['Hexo'],
+		date: '2026-11-16',
 	}],
 }] satisfies FeedGroup[]
